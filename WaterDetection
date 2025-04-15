@@ -1,0 +1,34 @@
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define SENSOR_PIN 0    // Soil Moisture Sensor connected to A0
+#define RELAY_PIN 7     // Relay connected to Digital Pin 7
+#define THRESHOLD 500   // Moisture threshold (adjust as needed)
+
+void setup() {
+    // Configure relay pin as output
+    DDRD |= (1 << RELAY_PIN);  
+
+    // Initialize Serial Communication
+    Serial.begin(9600);  
+}
+
+void loop() {
+    // Read soil moisture sensor value
+    int moisture = analogRead(SENSOR_PIN);
+
+    // Print moisture value to Serial Monitor
+    Serial.print("Soil Moisture Level: ");
+    Serial.println(moisture);
+
+    // Check if soil is wet
+    if (moisture < THRESHOLD) {  
+        PORTD |= (1 << RELAY_PIN);  // Turn ON relay (Vibration Motor ON)
+        Serial.println("Water Detected! Vibration ON");
+    } else {
+        PORTD &= ~(1 << RELAY_PIN); // Turn OFF relay (Vibration Motor OFF)
+        Serial.println("Dry Soil. Vibration OFF");
+    }
+
+    _delay_ms(1000);  // Wait for 1 second
+}
